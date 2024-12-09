@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AnnotationValueTest {
 
     @Test
-    @DisplayName("어노테이션 Value 테스트")
+    @DisplayName("schedulerTaskAnnotation 테스트")
     void test_case_1() throws Exception {
         // given
         Class<?> clazz = SchedulerTaskAnnotationTest.class;
@@ -37,11 +38,37 @@ class AnnotationValueTest {
 
     }
 
+    @Test
+    @DisplayName("schedulerTimeUnitTask 테스트")
+    void test_case_2() throws Exception {
+        // given
+        Class<?> clazz = SchedulerTaskAnnotationTest.class;
+        // when
+        Method declaredMethods = clazz.getDeclaredMethod("timeUnitTest");
+        // then
+        if (declaredMethods.isAnnotationPresent(ScheduledTask.class)) {
+            ScheduledTask annotation = declaredMethods.getAnnotation(ScheduledTask.class);
+
+            log.info("Found annotation method: {}", declaredMethods.getName());
+            log.info("cron:{}", annotation.cron());
+            log.info("name:{}", annotation.name());
+
+            assertEquals("schedulerTimeUnitTask", annotation.name());
+            assertEquals(TimeUnit.DAYS, annotation.unit());
+        }
+
+    }
+
     static class SchedulerTaskAnnotationTest {
 
         @ScheduledTask(cron = "0 0/1 * * * ?", name = "schedulerTaskAnnotation")
         public void test() {
             log.info("SchedulerTaskAnnotation");
+        }
+
+        @ScheduledTask(unit = TimeUnit.DAYS, name = "schedulerTimeUnitTask")
+        public void timeUnitTest() {
+            log.info("schedulerTimeUnitTask");
         }
 
     }
