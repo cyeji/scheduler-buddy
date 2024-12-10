@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * con-utils 테스트 코드 작성
  */
 class CronParserTest {
-    
+
     @Test
     @DisplayName("cron parser 테스트")
-    void test_case_1 () {
+    void test_case_1() {
         // given
         String validCron = "0 0/5 * * * ?";
         // when
@@ -27,16 +27,20 @@ class CronParserTest {
         Assertions.assertDoesNotThrow(cron::validate, "Cron expression should be valid");
     }
 
-
     @Test
     @DisplayName("cron parser exception 테스트")
-    void test_case_2 () {
+    void test_case_2() {
         String invalidQuartzCron = "invalid cron";
         CronParser parser = new CronParser(CronDefinitionBuilder.instanceDefinitionFor(CronType.QUARTZ));
 
         assertThrows(IllegalArgumentException.class, () -> {
-            Cron cron = parser.parse(invalidQuartzCron);
-            cron.validate();
+            validateCronExpression(parser, invalidQuartzCron);
         }, "Invalid cron expression should throw an exception");
     }
+
+    private void validateCronExpression(CronParser parser, String cronExpression) {
+        Cron cron = parser.parse(cronExpression);
+        cron.validate();
+    }
+
 }

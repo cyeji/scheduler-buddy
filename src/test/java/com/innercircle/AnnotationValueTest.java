@@ -59,6 +59,9 @@ class AnnotationValueTest {
 
     }
 
+    /**
+     * 스케쥴러 어노테이션 테스트 용 클래스
+     */
     static class SchedulerTaskAnnotationTest {
 
         @ScheduledTask(cron = "0 0/1 * * * ?", name = "schedulerTaskAnnotation")
