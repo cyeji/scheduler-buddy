@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Scheduler 어노테이션 검증 테스트
@@ -59,6 +60,26 @@ class AnnotationValueTest {
 
     }
 
+    @Test
+    @DisplayName("schedulerLockTest 테스트")
+    void test_case_3() throws Exception {
+        // given
+        Class<?> clazz = SchedulerTaskAnnotationTest.class;
+        // when
+        Method declaredMethods = clazz.getDeclaredMethod("schedulerLockTest");
+        // then
+        if (declaredMethods.isAnnotationPresent(ScheduledTask.class)) {
+            ScheduledTask annotation = declaredMethods.getAnnotation(ScheduledTask.class);
+
+            log.info("Found annotation method: {}", declaredMethods.getName());
+            log.info("cron:{}", annotation.cron());
+            log.info("name:{}", annotation.name());
+
+            assertEquals("schedulerLockTask", annotation.name());
+            assertTrue(annotation.lock());
+        }
+    }
+
     /**
      * 스케쥴러 어노테이션 테스트 용 클래스
      */
@@ -72,6 +93,11 @@ class AnnotationValueTest {
         @ScheduledTask(unit = TimeUnit.DAYS, name = "schedulerTimeUnitTask")
         public void timeUnitTest() {
             log.info("schedulerTimeUnitTask");
+        }
+
+        @ScheduledTask(unit = TimeUnit.DAYS, name = "schedulerLockTask", lock = true)
+        public void schedulerLockTest() {
+            log.info("schedulerLockTask");
         }
 
     }
